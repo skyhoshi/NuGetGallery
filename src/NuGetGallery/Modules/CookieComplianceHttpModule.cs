@@ -41,14 +41,29 @@ namespace NuGetGallery.Modules
                 return;
             }
 
+            var userId = request.Headers?["USER_ID"];
+            var scopeId = request.Headers?["SCOPE_ID"];
+
             var canWriteAnalyticsCookies = false;
             try
             {
                 var requestWrapper = new HttpRequestWrapper(request);
                 canWriteAnalyticsCookies = await CookieComplianceService.Instance?.CanWriteAnalyticsCookiesAsync(requestWrapper);
+
+                if (userId != null && scopeId != null)
+                {
+                    CookieComplianceService.Logger?.LogInformation("{Scope}: {User}'s consent check of the " +
+                        "cookie compliance is {canWriteAnalyticsCookies}.", scopeId, userId, canWriteAnalyticsCookies);
+                }
             }
             catch (Exception exception)
             {
+                if (userId != null && scopeId != null)
+                {
+                    CookieComplianceService.Logger?.LogInformation("{Scope}: {User}'s consent check of the " +
+                        "cookie compliance throws exceptions.", scopeId, userId);
+                }
+
                 CookieComplianceService.Logger?.LogError(0, exception, "Cookie compliance check failed in the module: {ModuleName}", nameof(CookieComplianceHttpModule));
             }
 
