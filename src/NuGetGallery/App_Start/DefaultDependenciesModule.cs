@@ -442,7 +442,7 @@ namespace NuGetGallery
                 .As<IPackageVulnerabilityService>()
                 .InstancePerLifetimeScope();
 
-            builder.Register(c => new CookieExpirationService(domain: configuration.GetSiteRoot(useHttps: true)))
+            builder.Register(c => new CookieExpirationService(domain: configuration.GetSiteDomain()))
                 .As<ICookieExpirationService>()
                 .SingleInstance();
 
